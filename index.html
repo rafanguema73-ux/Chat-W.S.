@@ -1,145 +1,149 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CHAT W.S - Chat Write for Sensor</title>
-<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22CHAT%20W.S%22%2C%22short_name%22%3A%22CHAT%20W.S%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f3f4f6%22%2C%22theme_color%22%3A%22%23e53935%22%2C%22start_url%22%3A%22.%2F%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%://flaticon.com%2F512%2F1087%2F1087815.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
-<meta name="theme-color" content="#e53935">
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;background:#1e293b;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center}
-  .app{width:100%;max-width:440px;background:#f3f4f6;min-height:100vh;padding-bottom:30px}
-  /* Cabecera estilo imagen con acento Rojo y Blanco */
-  .header{background:#ffffff;color:#111827;padding:16px;border-bottom:3px solid #e53935;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-  .top-row{display:flex;justify-content:space-between;align-items:center}
-  .brand{font-size:21px;font-weight:900;letter-spacing:0.5px;color:#111827}
-  .brand span.red{color:#e53935}
-  .brand small{display:block;font-size:11px;color:#6b7280;font-weight:600}
-  .badge-plan{background:#e0e7ff;color:#3730a3;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:900;cursor:pointer;vertical-align:middle}
-  .badge-plan.pro{background:#fef3c7;color:#b45309;border:1px solid #f59e0b}
-  .icons button{background:#f3f4f6;border:none;color:#111827;font-size:17px;cursor:pointer;padding:6px 8px;border-radius:10px;margin-left:3px}
-  /* Navegación */
-  .tabs{display:flex;background:#fff;border-bottom:1px solid #e5e7eb}
-  .tab{flex:1;padding:11px 2px;text-align:center;font-weight:800;font-size:11px;border:none;background:#fff;cursor:pointer;color:#6b7280;border-bottom:3px solid transparent}
-  .tab.active{color:#e53935;border-bottom:3px solid #e53935;background:#fef2f2}
-  .sec{display:none;padding:12px}
-  .sec.active{display:block}
-  /* Tarjetas */
-  .card{background:#fff;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.04);border:1px solid #e5e7eb}
-  .card-title{font-weight:800;font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;color:#1f2937}
-  input,select{width:100%;padding:10px;border:1.5px solid #d1d5db;border-radius:12px;margin:4px 0;font-size:14px;font-family:inherit;background:#f9fafb}
-  input:focus,select:focus{outline:none;border-color:#2563eb;background:#fff}
-  /* Editor y autocorrector */
-  .ed{outline:none;min-height:145px;border:1.5px solid #e5e7eb;border-radius:14px;padding:12px;background:#fff;line-height:1.55;overflow-wrap:break-word;color:#111827}
-  .typo{text-decoration:underline wavy #e53935;cursor:pointer}
-  .autocorrect-bar{background:#fee2e2;color:#b91c1c;padding:8px 10px;border-radius:10px;font-size:12px;margin-top:8px;display:none;font-weight:600}
-  .valioso{background:#fef08a;padding:2px 5px;border-radius:5px;font-weight:700;color:#854d0e}
-  .trad-azul{color:#0369a1;background:#e0f2fe;padding:9px;border-radius:10px;margin-top:6px;font-size:13px;border-left:4px solid #0284c7}
-  /* Botones idénticos a la imagen (Verde, Azul/Índigo, Rojo) */
-  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-  .btn{width:100%;padding:13px;border-radius:14px;border:none;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
-  .btn-green{background:#0f9d58;color:#fff;box-shadow:0 3px 8px rgba(15,157,88,0.25)}
-  .btn-blue{background:#4f46e5;color:#fff;box-shadow:0 3px 8px rgba(79,70,229,0.25)}
-  .btn-red{background:#e53935;color:#fff;box-shadow:0 3px 8px rgba(229,57,53,0.25)}
-  .btn-primary-blue{background:#2563eb;color:#fff;margin-top:8px}
-  .btn-gold{background:linear-gradient(45deg,#f59e0b,#d97706);color:#fff}
-  .btn-outline{background:#fff;border:1.5px solid #d1d5db;color:#1f2937}
-  .epi-bar{display:flex;gap:5px;margin:6px 0}
-  .epi-btn{flex:1;padding:7px;border:1.5px solid #e5e7eb;border-radius:10px;background:#f9fafb;font-weight:800;cursor:pointer;font-size:12px;color:#1f2937}
-  .epi-btn:active{border-color:#e53935;color:#e53935}
-  /* Modal Recordatorio Rojo */
-  .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:99;justify-content:center;align-items:flex-start;padding-top:40px}
-  .modal{background:#fff;width:90%;max-width:380px;border-radius:20px;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.25)}
-  .modal-head{background:#fee2e2;color:#b91c1c;padding:13px 16px;font-weight:800;display:flex;justify-content:space-between;align-items:center}
-  .modal-body{padding:14px}
-  .opt-row{border:1.5px solid #e5e7eb;border-radius:12px;padding:10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
-  /* Chat y Horario */
-  .chat-box{max-height:240px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:14px;padding:10px;background:#f9fafb;margin-bottom:8px}
-  .msg{margin-bottom:10px;padding:10px;border-radius:12px;background:#fff;border:1px solid #e5e7eb;font-size:14px}
-  .mat-item{display:flex;justify-content:space-between;padding:10px;border:1.5px solid #e5e7eb;border-radius:12px;margin-bottom:6px;cursor:pointer;background:#fff}
-  .mat-done{background:#ecfdf5;border-color:#6ee7b7;text-decoration:line-through;color:#047857}
-  .pro-tag{background:#fef3c7;color:#b45309;font-size:10px;padding:2px 6px;border-radius:6px;font-weight:900}
-  @media print {
-    body{background:#fff}
-    .app{max-width:100%;background:#fff}
-    .tabs,.no-print,.icons,.autocorrect-bar,.btn,.btn-row,.epi-bar{display:none !important}
-    .card{box-shadow:none;border:none;padding:0}
-    .ed{border:none}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10121b">
+  <meta name="description" content="CHAT-WS: inteligencia artificial, comunicación, aprendizaje e investigación.">
+  <title>CHAT W.S. - Inteligencia y creatividad</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<div class="app">
-  <!-- CABECERA ROJO, AZUL Y BLANCO -->
-  <div class="header">
-    <div class="top-row">
-      <div class="brand">CHAT <span class="red">W.S</span> <span id="planBadge" class="badge-plan" onclick="showTab('tabPro',null)">GRATIS</span>
-        <small>Chat Write for Sensor • V3 PRO</small>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">W.S.</span>
+        <span>CHAT W.S.</span>
       </div>
-      <div class="icons no-print">
-        <button onclick="openReminder()" title="Recordatorio">🔔</button>
-        <button onclick="togglePrivacy()" title="Privacidad">🔒</button>
-        <button onclick="speakText()" title="Leer trabajo">🔊</button>
+
+      <div class="header-actions">
+        <button id="menuButton" aria-label="Abrir menú">☰</button>
+        <button id="moreButton" aria-label="Más opciones">⋮</button>
       </div>
+    </header>
+
+    <div class="workspace">
+
+      <aside class="sidebar" id="sidebar">
+        <button class="nav-item active" data-section="inicio">⌂ Inicio</button>
+        <button class="nav-item" data-section="asistente">✧ Asistente IA</button>
+        <button class="nav-item" data-section="laboratorio">⚗ Laboratorio privado</button>
+        <button class="nav-item" data-section="mundo">◎ Mundo de hoy</button>
+        <button class="nav-item" data-section="curiosidades">✦ Curiosidades</button>
+        <button class="nav-item" data-section="contactos">♧ Contactos y chats</button>
+        <button class="nav-item" data-section="documentos">▤ Documentos y PDF</button>
+        <button class="nav-item" data-section="traductor">文 Traductor</button>
+        <button class="nav-item" data-section="diccionario">📖 Diccionario</button>
+        <button class="nav-item" data-section="voz">◉ Asistente de voz</button>
+
+        <div class="sidebar-bottom">
+          <button class="nav-item" data-section="configuracion">⚙ Configuración</button>
+          <button class="nav-item" data-section="cuenta">♙ Mi cuenta</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+
+        <section id="inicio" class="page active">
+          <div class="welcome">
+            <p class="eyebrow">BIENVENIDO A CHAT W.S.</p>
+            <h1>Tu espacio de inteligencia y creatividad.</h1>
+            <p>Aprende, investiga, crea y comunícate desde un solo lugar.</p>
+          </div>
+
+          <div class="plan-card">
+            <span>PLAN ACTUAL</span>
+            <h2>Básico gratuito</h2>
+            <p>0 USD</p>
+          </div>
+
+          <h2>Explora tus herramientas</h2>
+
+          <div class="module-grid">
+            <button data-section="asistente">✧<span>Asistente IA</span></button>
+            <button data-section="laboratorio">⚗<span>Laboratorio</span></button>
+            <button data-section="mundo">◎<span>Mundo de hoy</span></button>
+            <button data-section="contactos">♧<span>Contactos</span></button>
+            <button data-section="documentos">▤<span>Documentos</span></button>
+            <button data-section="traductor">文<span>Traductor</span></button>
+          </div>
+        </section>
+
+        <section id="asistente" class="page">
+          <h1>Asistente de inteligencia artificial</h1>
+          <p>Tu espacio para preguntar, aprender, investigar y crear.</p>
+          <div class="placeholder">
+            El asistente IA se conectará en una siguiente fase.
+          </div>
+        </section>
+
+        <section id="laboratorio" class="page">
+          <h1>Laboratorio privado</h1>
+          <p>Un espacio multidisciplinario para desarrollar proyectos.</p>
+          <div class="placeholder">
+            Aquí incorporaremos las áreas científicas, técnicas y creativas.
+          </div>
+        </section>
+
+        <section id="mundo" class="page">
+          <h1>Mundo de hoy</h1>
+          <p>Información, actualidad, ciencia y descubrimientos.</p>
+          <div class="placeholder">
+            Aquí conectaremos las fuentes de información actualizadas.
+          </div>
+        </section>
+
+        <section id="curiosidades" class="page">
+          <h1>Curiosidades y aprendizaje</h1>
+          <p>Descubre nuevos conocimientos y vídeos educativos.</p>
+        </section>
+
+        <section id="contactos" class="page">
+          <h1>Contactos y conversaciones</h1>
+          <p>Conecta con otros usuarios mediante códigos personales.</p>
+          <div class="placeholder">
+            Aquí construiremos los contactos, solicitudes y grupos.
+          </div>
+        </section>
+
+        <section id="documentos" class="page">
+          <h1>Documentos y PDF</h1>
+          <p>Escribe, edita, organiza y lee tus documentos.</p>
+        </section>
+
+        <section id="traductor" class="page">
+          <h1>Traductor multilingüe</h1>
+          <p>Traducción y aprendizaje de idiomas.</p>
+        </section>
+
+        <section id="diccionario" class="page">
+          <h1>Diccionario</h1>
+          <p>Consulta palabras, significados y expresiones.</p>
+        </section>
+
+        <section id="voz" class="page">
+          <h1>Asistente de voz</h1>
+          <p>Control, dictado y lectura mediante voz.</p>
+        </section>
+
+        <section id="configuracion" class="page">
+          <h1>Configuración</h1>
+          <p>Personaliza tu experiencia en CHAT W.S.</p>
+        </section>
+
+        <section id="cuenta" class="page">
+          <h1>Mi cuenta</h1>
+          <p>Tu perfil, seguridad y suscripción.</p>
+        </section>
+
+      </main>
     </div>
   </div>
 
-  <!-- MENÚ DE SECCIONES -->
-  <div class="tabs no-print">
-    <button class="tab active" onclick="showTab('tabEdit',this)">✏️ TRABAJO</button>
-    <button class="tab" onclick="showTab('tabChat',this)">💬 CHAT W.S</button>
-    <button class="tab" onclick="showTab('tabVoz',this)">🎙️ VOZ/HORARIO</button>
-    <button class="tab" onclick="showTab('tabPro',this)">👑 PRO</button>
-  </div>
-
-  <!-- 1. TRABAJO DE CLASE E IMPRESIÓN -->
-  <div id="tabEdit" class="sec active">
-    <div class="card no-print">
-      <div class="card-title"><span>🌐 Idioma y Región</span><small id="regTag" style="color:#2563eb;font-weight:800">AUTO</small></div>
-      <select id="langSelect" onchange="changeLang(this.value)">
-        <option value="es-GQ">🇬🇶 Español (Guinea Ecuatorial / Región)</option>
-        <option value="es-ES">🇪🇸 Español (España)</option>
-        <option value="es-MX">🇲🇽 Español (Latinoamérica)</option>
-        <option value="fr-FR">🇫🇷 Français (Francés)</option>
-        <option value="en-US">🇺🇸 English (US / Región)</option>
-        <option value="en-GB">🇬🇧 English (UK)</option>
-        <option value="zh-CN">🇨🇳 中文 (Chino Simplificado)</option>
-        <option value="zh-TW">🇹🇼 繁體中文 (Chino Tradicional)</option>
-        <option value="pt-PT">🇵🇹 Português (Portugués)</option>
-        <option value="de-DE">🇩🇪 Deutsch (Alemán)</option>
-        <option value="ar-SA">🇸🇦 العربية (Árabe)</option>
-        <option value="la">🏛️ Latina (Latín)</option>
-        <option value="el-GR">🇬🇷 Ελληνικά (Griego)</option>
-        <option value="ja-JP">🇯🇵 日本語 (Japonés)</option>
-      </select>
-    </div>
-
-    <div class="card">
-      <input id="esc" placeholder="Escuela / Institución">
-      <input id="tit" placeholder="Título del trabajo de clase">
-      <div class="epi-bar no-print">
-        <button class="epi-btn" onclick="addT('T1')">T1</button>
-        <button class="epi-btn" onclick="addT('T2')">T2</button>
-        <button class="epi-btn" onclick="addT('T3')">T3</button>
-        <button class="epi-btn" onclick="addT('T4')">T4</button>
-        <button class="epi-btn" style="background:#fef08a;border-color:#eab308" onclick="markValioso()">⭐ Clave</button>
-      </div>
-      <div class="no-print" style="display:flex;align-items:center;gap:8px;margin-top:4px">
-        <span style="font-size:11px;font-weight:bold;color:#4b5563">Letra: <b id="szVal" style="color:#2563eb">16</b>px</span>
-        <input type="range" min="8" max="64" value="16" oninput="changeSize(this.value)" style="flex:1">
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span>✏️ Editor (Toca palabra subrayada para revertir)</span></div>
-      <div id="ed" class="ed" contenteditable="true" onkeyup="autoCheck(event)">Escribe aquí tu trabajo de clase...</div>
-      <div id="acBar" class="autocorrect-bar"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span>📷 Imagen Adjunta</span><button class="no-print" onclick="document.getElementById('im').src=''" style="border:none;background:#fee2e2;color:#dc2626;border-radius:8px;padding:3px 8px;font-weight:bold;cursor:pointer">✖</button></div>
-      <img id="im" src="https://picsum.photos" style="width:100%;border-radius:12px;height:165px;object-fit:cover">
-      <div class="btn-row no-print">
-        <button class="btn btn-outline" onclick="document.getElementById('cam').click()">📸 Cámara</button>
-        
+  <script src="app.js"></script>
+</body>
+ </html>
+ 
